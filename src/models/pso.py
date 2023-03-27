@@ -59,7 +59,8 @@ class PSO():
         self.v_i = self.v_i * (2 * self.v_max) - self.v_max
         self.f_x_i = self.fitness_func(self.x_i)
         self.f_gbest = self.f_x_i.max()
-        self.gbest = self.x_i[self.f_x_i == self.f_x_i.max()].squeeze(axis=0)
+        #self.gbest = self.x_i[self.f_x_i == self.f_x_i.max()].squeeze(axis=0)
+        self.gbest = self.x_i[self.f_x_i == self.f_x_i.max()]
         self.pbest = self.x_i.copy()
         self.f_pbest = self.f_x_i.copy()
     
@@ -114,6 +115,10 @@ class PSO():
     
     def update_position(self):
         self.x_i = self.x_i + self.v_i
+        mask = self.x_i > 1
+        self.x_i[mask] = 1
+        mask = self.x_i < 0
+        self.x_i[mask] = 0
 
     def callback(self):
         max_val = self.f_gbest

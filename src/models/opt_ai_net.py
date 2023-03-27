@@ -51,6 +51,10 @@ class OptAiNet():
         self.max_fitness = 0
         self.min_fitness = 1
 
+        self.best_solution_fitness = 0
+        self.best_solution = 0
+
+
         #self.init_pop()
         #self.fitness_evaluation()
         #self.clone()
@@ -66,7 +70,7 @@ class OptAiNet():
         self.pop = np.random.rand(self.pop_size, self.chrom_length)
         self.min_mat = self.value_ranges.T[0, :]
         self.max_mat = self.value_ranges.T[1,:]
-        self.pop = self.pop * (self.max_mat - self.min_mat) + self.min_mat
+        #self.pop = self.pop * (self.max_mat - self.min_mat) + self.min_mat
         #self.f_pop = self.fitness_func(self.pop)
     
     def fitness_evaluation(self):
@@ -80,6 +84,11 @@ class OptAiNet():
             self.min_fitness = self.curr_f_min
 
         self.f_pop_norm = (self.f_pop - self.min_fitness)/(self.max_fitness - self.min_fitness)
+        curr_max_fitness = self.f_pop.max()
+        if self.best_solution_fitness < curr_max_fitness:
+            self.best_solution = self.pop[self.f_pop.argmax()]
+            self.best_solution_fitness = curr_max_fitness
+
         return
     
     def clone(self):
@@ -97,6 +106,10 @@ class OptAiNet():
 
         self.alpha = self.alpha.reshape(self.random_mutation.shape)
         self.pop = self.pop + self.alpha * self.random_mutation
+        mask = self.pop > 1
+        self.pop[mask] = 1
+        mask = self.pop < 0
+        self.pop[mask] = 0
         # Still needs to add a way to invalidate a individual in a positsion outside of the searhc spacie
 
     def evaluation(self):
@@ -124,7 +137,7 @@ class OptAiNet():
         if n_new_ind == 0:
             n_new_ind = 1
         newcomers = np.random.rand(n_new_ind, self.chrom_length)
-        newcomers = newcomers * (self.max_mat - self.min_mat) + self.min_mat
+        #newcomers = newcomers * (self.max_mat - self.min_mat) + self.min_mat
         self.pop = np.append(self.pop, newcomers, axis=0)
 
     def callback(self):
