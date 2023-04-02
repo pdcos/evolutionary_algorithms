@@ -8,6 +8,7 @@ from tqdm import tqdm
 import time
 import scipy
 from scipy.spatial import distance_matrix
+import math
 
 
 class OptAiNet():
@@ -48,8 +49,10 @@ class OptAiNet():
         self.verbose = verbose
         np.random.seed(seed=seed)
 
-        self.max_fitness = 0
-        self.min_fitness = 1
+
+        # Problem in max_fitness inicialization due to high incidence of zeros in rocket fitness
+        self.max_fitness = 0.1
+        self.min_fitness = 0
 
         self.best_solution_fitness = 0
         self.best_solution = 0
@@ -68,8 +71,8 @@ class OptAiNet():
     
     def init_pop(self):
         self.pop = np.random.rand(self.pop_size, self.chrom_length)
-        self.min_mat = self.value_ranges.T[0, :]
-        self.max_mat = self.value_ranges.T[1,:]
+        #self.min_mat = self.value_ranges.T[0, :]
+        #self.max_mat = self.value_ranges.T[1,:]
         #self.pop = self.pop * (self.max_mat - self.min_mat) + self.min_mat
         #self.f_pop = self.fitness_func(self.pop)
     
@@ -105,11 +108,13 @@ class OptAiNet():
         self.alpha = np.repeat(self.alpha, self.chrom_length)
 
         self.alpha = self.alpha.reshape(self.random_mutation.shape)
+
         self.pop = self.pop + self.alpha * self.random_mutation
         mask = self.pop > 1
         self.pop[mask] = 1
         mask = self.pop < 0
         self.pop[mask] = 0
+
         # Still needs to add a way to invalidate a individual in a positsion outside of the searhc spacie
 
     def evaluation(self):
