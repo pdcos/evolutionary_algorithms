@@ -95,6 +95,9 @@ class OptAiNet():
 
         self.max_fitness = self.curr_f_max
         self.min_fitness = self.curr_f_min
+        if self.max_fitness == 0:
+            self.max_fitness = 0.01
+
         # if self.max_fitness < self.curr_f_max:
         #     self.max_fitness = self.curr_f_max
         # if self.min_fitness > self.curr_f_min:
@@ -271,4 +274,3 @@ class OptAiNet():
         plt.ylabel("Fitness Value")
         plt.legend()
         plt.show()
-
