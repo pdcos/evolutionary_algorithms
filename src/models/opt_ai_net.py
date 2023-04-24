@@ -118,6 +118,7 @@ class OptAiNet():
         self.memory_cell_history.append(memory_denorm)
         clone_denorm = self.pop * (self.max_mat - self.min_mat) + self.min_mat
         self.clone_history.append(clone_denorm)
+        print(self.pop.shape)
 
 
     def mutation(self):

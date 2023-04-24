@@ -9,21 +9,21 @@ class CMA_ES():
     def __init__(self,
                  num_epochs:int,
                  lamb:int,
-                 sigma,
                  mi:int,
                  chrom_length:int,
                  value_ranges:list,
                  fitness_func,
-                 seed=1,
+                 seed=1,    
                  eval_every = 10,
                  verbose=0,
                  maintain_history=False,
+                 sigma=0.0444,
                 ):
         
         np.random.seed(seed=seed)
         self.num_epochs = num_epochs
         self.N = chrom_length
-        self.x_mean = np.random.rand(self.N)
+        self.x_mean = np.array([0.5] * self.N)
         self.lamb = lamb
         self.sigma = sigma # Step size
         self.mi = mi # Number of best candidates
@@ -50,7 +50,13 @@ class CMA_ES():
 
     def step(self):
         self.x_i = np.random.multivariate_normal(self.x_mean, self.cov_mat, size=self.lamb)
+        rows_to_delete = np.any(self.x_i > 1, axis=1)
+        self.x_i = self.x_i[~rows_to_delete]
+        rows_to_delete = np.any(self.x_i < 0, axis=1)
+        self.x_i = self.x_i[~rows_to_delete]
+
         self.f_x_i = self.fitness_func(self.x_i, self.value_ranges)
+
         mask = (-self.f_x_i).argsort()
         self.f_x_i = self.f_x_i[mask]
         self.x_i = self.x_i[mask]
@@ -60,6 +66,7 @@ class CMA_ES():
         #print(self.cov_mat)
 
         # Update step size (sigma) 
+        # Need to improve this part
         #p_sigma = np.zeros(self.N)
         #print(p_sigma)
         #for i in range(self.mi):
@@ -69,8 +76,6 @@ class CMA_ES():
         #print(p_sigma_2)
         p_sigma /= np.linalg.norm(p_sigma)
         self.sigma *= np.exp((np.linalg.norm(p_sigma) - 1) / self.N)
-
-        
 
         if self.maintain_history:
             particle = self.x_i * (self.max_mat - self.min_mat) + self.min_mat
@@ -100,3 +105,5 @@ class CMA_ES():
         plt.ylabel("Fitness Value")
         plt.legend()
         plt.show()
+
+
