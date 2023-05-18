@@ -43,14 +43,17 @@ class PSO():
         self.f_g_best_alltime = 0
         self.neighborhood_mode = neighborhood_mode
 
+        self.phi = self.global_factor + self.local_factor
+        self.K = 2.0/(np.abs(2-self.phi - np.sqrt((self.phi**2)-(4*self.phi))))
+
         np.random.seed(seed=seed)
 
-        self.init_pop()
-        self.calculate_fitness()
-        self.update_gbest()
-        self.update_pbest()
-        self.update_speed()
-        self.update_position()
+        #self.init_pop()
+        #self.calculate_fitness()
+        #self.update_gbest()
+        #self.update_pbest()
+        #self.update_speed()
+        #self.update_position()
 
 
     def init_pop(self):
@@ -106,9 +109,9 @@ class PSO():
     def update_speed(self):
         rand_factor_1, random_factor_2 = np.random.rand(2)
 
-        self.v_i = (self.v_i * self.speed_factor) + \
+        self.v_i = self.K*((self.v_i * self.speed_factor) + \
                     (rand_factor_1 * self.global_factor * (self.gbest - self.x_i)) + \
-                    (random_factor_2 * self.local_factor * (self.pbest - self.x_i))
+                    (random_factor_2 * self.local_factor * (self.pbest - self.x_i)))
         
         self.v_i[self.v_i > self.v_max] = self.v_max
         self.v_i[self.v_i < -self.v_max] = -self.v_max
