@@ -118,7 +118,7 @@ class OptAiNet():
         self.memory_cell_history.append(memory_denorm)
         clone_denorm = self.pop * (self.max_mat - self.min_mat) + self.min_mat
         self.clone_history.append(clone_denorm)
-        print(self.pop.shape)
+        #print(self.pop.shape)
 
 
     def mutation(self):
@@ -160,11 +160,11 @@ class OptAiNet():
         self.f_pop_avg_previous = self.f_pop_avg
     
     def supress_cells(self):
-        print(self.pop)
+        #print(self.pop)
         distances = distance_matrix(self.pop, self.pop) 
-        print(distances)       
+        #print(distances)       
         f_pop_matrix = np.tile(self.f_pop, (distances.shape[0], 1)) 
-        print(f_pop_matrix)
+        #print(f_pop_matrix)
         masked_f = f_pop_matrix * (distances<self.supression_threshold)
         best_indices = np.where(masked_f == masked_f.max(axis=1).T)[1]
         best_indices = np.unique(best_indices)
